@@ -2,7 +2,16 @@
 include "includes/header.php";
 include "includes/navigation.php";
 
+if(isset($_GET['category']))
+
+{
+
+    $category_id = $_GET['category'];
+
+}
 ?>
+
+
 
 
 
@@ -15,39 +24,10 @@ include "includes/navigation.php";
             <!-- Blog Entries Column -->
             <div class="col-md-8">
                 <?php
-                if(isset($_GET['page']))
-                {
-                    $page = $_GET['page'];
-                }
-                else
-                {
-                    $page = "";
-                }
-                if ($page == "" || $page == 1){
-                   $page_1 = 0;
-                }
-                else
-                {
-                    $page_1 = ($page * 5) - 5;
-                }
-
-
-                $select_allstmt = $db->prepare("SELECT * FROM posts WHERE post_status='published'");
-                $select_allstmt->execute();
-                $count = $select_allstmt->fetchAll(PDO::FETCH_ASSOC);
-                $count = count($count);
-                $count_per_page = ceil($count/5);
                 try{
-
-                    $select_stmt = $db->prepare("SELECT * FROM posts WHERE post_status='published' LIMIT $page_1, 5");
+                    $select_stmt = $db->prepare("SELECT * FROM posts WHERE post_cat_id={$category_id}");
                     $select_stmt->execute();
                     $row = $select_stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-                    if(empty($row))
-                    {
-                        echo "<h1>No posts :/</h1>";
-                    }
                     foreach($row as $result) {
                         $post_id = $result['post_id'];
                         $post_title = $result['post_title'];
@@ -66,14 +46,13 @@ include "includes/navigation.php";
                             <a href="post.php?p_id=<?php echo $post_id ?>"><?php echo $post_title ?></a>
                         </h2>
                         <p class="lead">
-                            by <a href="author.php?author=<?php echo $post_author?>"><?php echo $post_author ?></a>
+                            by <a href="index.php"><?php echo $post_author ?></a>
                         </p>
                         <p><span class="glyphicon glyphicon-time"></span> <?php echo $post_date ?></p>
                         <hr>
-                        <a href="post.php?p_id=<?php echo $post_id ?>">
-                        <img class="img-responsive" src="images/<?php echo $post_image ?>" alt=""></a>
+                        <img class="img-responsive" src="images/<?php echo $post_image ?>" alt="">
                         <hr>
-                        <p><?php echo substr($post_content, 0, 100)  ?> </p>
+                        <p><?php echo substr($post_content, 0, 100) ?> </p>
                         <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id ?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 
                         <hr>
@@ -103,16 +82,6 @@ include "includes/navigation.php";
         <!-- /.row -->
 
         <hr>
-    <ul class="pager">
-       <?php
-       for ($i=1; $i<=$count_per_page; $i++)
-       {
-           echo "<li><a href='index.php?page={$i}'>{$i}</a></li>";
-       }
-
-       ?>
-
-    </ul>
 
 
         <?php

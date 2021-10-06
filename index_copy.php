@@ -15,35 +15,10 @@ include "includes/navigation.php";
             <!-- Blog Entries Column -->
             <div class="col-md-8">
                 <?php
-                if(isset($_GET['page']))
-                {
-                    $page = $_GET['page'];
-                }
-                else
-                {
-                    $page = "";
-                }
-                if ($page == "" || $page == 1){
-                   $page_1 = 0;
-                }
-                else
-                {
-                    $page_1 = ($page * 5) - 5;
-                }
-
-
-                $select_allstmt = $db->prepare("SELECT * FROM posts WHERE post_status='published'");
-                $select_allstmt->execute();
-                $count = $select_allstmt->fetchAll(PDO::FETCH_ASSOC);
-                $count = count($count);
-                $count_per_page = ceil($count/5);
                 try{
-
-                    $select_stmt = $db->prepare("SELECT * FROM posts WHERE post_status='published' LIMIT $page_1, 5");
+                    $select_stmt = $db->prepare("SELECT * FROM posts WHERE post_status='published'");
                     $select_stmt->execute();
                     $row = $select_stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
                     if(empty($row))
                     {
                         echo "<h1>No posts :/</h1>";
@@ -103,16 +78,6 @@ include "includes/navigation.php";
         <!-- /.row -->
 
         <hr>
-    <ul class="pager">
-       <?php
-       for ($i=1; $i<=$count_per_page; $i++)
-       {
-           echo "<li><a href='index.php?page={$i}'>{$i}</a></li>";
-       }
-
-       ?>
-
-    </ul>
 
 
         <?php
